@@ -11,7 +11,7 @@ trait DerivedInstances {
      ev: LowPriority,
      underlying: Strict[MkElmType[T]]
    ): ElmType[T] =
-    underlying.value.apply
+    underlying.value.elm
 }
 
 trait CachedDerivedInstances {
@@ -21,5 +21,5 @@ trait CachedDerivedInstances {
      ev: LowPriority,
      underlying: Cached[Strict[MkElmType[T]]]
    ): ElmType[T] =
-    underlying.value.value.apply
+    underlying.value.value.elm
 }
