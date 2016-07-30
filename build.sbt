@@ -1,7 +1,7 @@
 import com.typesafe.sbt.pgp.PgpKeys
 
-lazy val `argonaut-shapeless` = project.in(file("."))
-  .aggregate(core, refined, test, doc)
+lazy val `elm-types` = project.in(file("."))
+  .aggregate(core, test, doc)
   .settings(commonSettings)
   .settings(compileSettings)
   .settings(noPublishSettings)
@@ -11,14 +11,8 @@ lazy val core = project
   .settings(coreSettings)
   .settings(projectSettings)
 
-lazy val refined = project
-  .dependsOn(core % "test")
-  .settings(commonSettings)
-  .settings(refinedSettings)
-  .settings(projectSettings)
-
 lazy val test = project
-  .dependsOn(core, refined)
+  .dependsOn(core)
   .settings(commonSettings)
   .settings(coreSettings)
   .settings(projectSettings)
@@ -32,7 +26,7 @@ lazy val test = project
   )
 
 lazy val doc = project
-  .dependsOn(core, refined)
+  .dependsOn(core)
   .settings(commonSettings)
   .settings(compileSettings)
   .settings(noPublishSettings)
@@ -44,28 +38,14 @@ lazy val doc = project
 
 val shapelessVersion = "2.3.1"
 
-lazy val coreName = "argonaut-shapeless_6.2"
+lazy val coreName = "elm-types"
 
 lazy val coreSettings = Seq(
   organization := "com.github.alexarchambault",
   name := coreName,
   moduleName := coreName,
   libraryDependencies ++= Seq(
-    "io.argonaut" %% "argonaut" % "6.2-M3",
     "com.chuusai" %% "shapeless" % shapelessVersion
-  )
-)
-
-lazy val refinedName = "argonaut-refined_6.2"
-
-lazy val refinedSettings = Seq(
-  organization := "com.github.alexarchambault",
-  name := refinedName,
-  moduleName := refinedName,
-  libraryDependencies ++= Seq(
-    "io.argonaut" %% "argonaut" % "6.1",
-    "com.chuusai" %% "shapeless" % shapelessVersion,
-    "eu.timepit" %% "refined" % "0.5.0"
   )
 )
 
@@ -85,20 +65,19 @@ lazy val compileSettings = Seq(
 )
 
 lazy val commonSettings = Seq(
-  homepage := Some(url("https://github.com/alexarchambault/argonaut-shapeless")),
   licenses := Seq(
     "BSD-3-Clause" -> url("http://www.opensource.org/licenses/BSD-3-Clause")
   ),
   scmInfo := Some(ScmInfo(
-    url("https://github.com/alexarchambault/argonaut-shapeless.git"),
-    "scm:git:github.com/alexarchambault/argonaut-shapeless.git",
-    Some("scm:git:git@github.com:alexarchambault/argonaut-shapeless.git")
+    url("https://github.com/reactormonk/argonaut-shapeless.git"),
+    "scm:git:github.com/reactormonk/argonaut-shapeless.git",
+    Some("scm:git:git@github.com:reactormonk/argonaut-shapeless.git")
   )),
   developers := List(Developer(
-    "alexarchambault",
-    "Alexandre Archambault",
+    "reactormonk",
+    "Simon Hafner",
     "",
-    url("https://github.com/alexarchambault")
+    url("https://github.com/reactormonk")
   )),
   publishMavenStyle := true,
   pomIncludeRepository := { _ => false },
