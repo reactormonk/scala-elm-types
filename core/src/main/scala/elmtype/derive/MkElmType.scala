@@ -5,7 +5,7 @@ import shapeless._
 import shapeless.labelled.{ field, FieldType }
 
 trait MkElmType[T] {
-  def elm: ElmType[T]
+  def elm: CombinedType[T]
 }
 
 object MkElmType {
@@ -30,6 +30,7 @@ object MkElmType {
     new MkElmType[S] {
       def elm = SumType(typeable, underlying(codecFor.codec))
     }
+
 }
 
 trait ProductElmType[P] {

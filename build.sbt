@@ -1,11 +1,5 @@
 import com.typesafe.sbt.pgp.PgpKeys
 
-lazy val `elm-types` = project.in(file("."))
-  .aggregate(core, test, doc)
-  .settings(commonSettings)
-  .settings(compileSettings)
-  .settings(noPublishSettings)
-
 lazy val core = project
   .settings(commonSettings)
   .settings(coreSettings)
@@ -38,10 +32,10 @@ lazy val doc = project
 
 val shapelessVersion = "2.3.1"
 
-lazy val coreName = "elm-types"
+lazy val coreName = "elmtypes"
 
 lazy val coreSettings = Seq(
-  organization := "com.github.alexarchambault",
+  organization := "org.reactormonk",
   name := coreName,
   moduleName := coreName,
   libraryDependencies ++= Seq(
