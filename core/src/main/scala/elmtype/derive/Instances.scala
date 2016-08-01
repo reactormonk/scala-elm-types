@@ -1,6 +1,6 @@
 package elmtype.derive
 
-import elmtype.{ ElmType }
+import elmtype.{ CombinedType }
 
 import shapeless.{ Cached, LowPriority, Strict, Widen, Witness }
 
@@ -10,7 +10,7 @@ trait DerivedInstances {
    (implicit
      ev: LowPriority,
      underlying: Strict[MkElmType[T]]
-   ): ElmType[T] =
+   ): CombinedType[T] =
     underlying.value.elm
 }
 
@@ -20,6 +20,6 @@ trait CachedDerivedInstances {
    (implicit
      ev: LowPriority,
      underlying: Cached[Strict[MkElmType[T]]]
-   ): ElmType[T] =
+   ): CombinedType[T] =
     underlying.value.value.elm
 }

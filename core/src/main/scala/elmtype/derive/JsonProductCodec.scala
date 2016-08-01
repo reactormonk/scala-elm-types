@@ -3,7 +3,7 @@ package derive
 
 trait JsonProductCodec {
   def emptyObject[A](): UnnamedProductType[A]
-  def fieldType[A](name: String, elmType: ElmType[A]): ElmField[A]
+  def fieldType[A](name: String, elmType: ValidSubType[A]): ElmField[A]
 }
 
 object JsonProductCodec {
@@ -31,5 +31,5 @@ class JsonProductObjCodec extends JsonProductCodec {
   def toJsonName(name: String) = name
 
   def emptyObject[A](): UnnamedProductType[A] = UnnamedProductType(List())
-  def fieldType[A](name: String, elmType: ElmType[A]): ElmField[A] = ElmField(toJsonName(name), elmType)
+  def fieldType[A](name: String, elmType: ValidSubType[A]): ElmField[A] = ElmField(toJsonName(name), elmType)
 }

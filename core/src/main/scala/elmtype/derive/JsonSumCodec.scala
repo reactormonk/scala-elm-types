@@ -3,7 +3,7 @@ package derive
 
 trait JsonSumCodec {
   def emptyObject[T](): UnnamedSumType[T]
-  def fieldType[T](name: String, elmType: ElmType[T]): ElmField[T]
+  def fieldType[T](name: String, elmType: ValidSubType[T]): ElmField[T]
 }
 
 trait JsonSumCodecFor[S] {
@@ -27,7 +27,7 @@ object JsonSumCodec {
 
 class JsonSumObjCodec extends JsonSumCodec {
   def emptyObject[T](): UnnamedSumType[T] = UnnamedSumType[T](List(), None)
-  def fieldType[T](name: String, elmType: ElmType[T]): ElmField[T] = ElmField[T](name, elmType)
+  def fieldType[T](name: String, elmType: ValidSubType[T]): ElmField[T] = ElmField[T](name, elmType)
 }
 
 class JsonSumTypeFieldCodec extends JsonSumCodec {
@@ -36,5 +36,5 @@ class JsonSumTypeFieldCodec extends JsonSumCodec {
   def typeField: String = "type"
 
   def emptyObject[A](): UnnamedSumType[A] = UnnamedSumType[A](List(), Some(typeField))
-  def fieldType[A](name: String, elmType: ElmType[A]): ElmField[A] = ElmField(toJsonName(name), elmType)
+  def fieldType[A](name: String, elmType: ValidSubType[A]): ElmField[A] = ElmField(toJsonName(name), elmType)
 }

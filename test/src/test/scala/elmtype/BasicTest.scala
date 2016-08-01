@@ -21,8 +21,14 @@ object BasicTest extends TestSuite {
           assert(p.typeable.describe == "Basic")
         case _ => throw new Exception("Wrong elm type.")
       }
-      assert(AST.typeAST(elmtype).render == "type alias Basic = { a : Int, b : String }")
+      val ast = AST.typeAST(elmtype)
+      assert(AST.render(ast) == "type alias Basic = { a : Int, b : String }")
+      assert(AST.decoder(ast) ==
+        """decodeBasic : Decoder Basic
+decodeBasic =
+  succeed Basic |: ("a" := int) |: ("b" := string)""")
     }
+
     'sum - {
       val elmtype = MkElmType[Sealed].elm
       elmtype match {
@@ -31,12 +37,27 @@ object BasicTest extends TestSuite {
         case _ => throw new Exception("Wrong elm type.")
       }
 
-      val result =
-    """type Sealed = SealedI I | SealedS S
-      |type alias I = { i : Int }
-      |type alias S = { s : String }""".stripMargin
+      val typeDecl =
+        """type Sealed = SealedI I | SealedS S
+type alias I = { i : Int }
+type alias S = { s : String }"""
 
-      assert(AST.typeAST(elmtype).render == result)
+      val decodeDecl =
+        """decodeSealed : Decoder Sealed
+decodeSealed = oneOf
+  [ ("I" := decodeI)
+  , ("S" := decodeS)
+  ]
+decodeI : Decoder I
+decodeI =
+  succeed I |: ("i" := int)
+decodeS : Decoder S
+decodeS =
+  succeed S |: ("s" := string)"""
+
+      val ast = AST.typeAST(elmtype)
+      assert(AST.render(ast) == typeDecl)
+      assert(AST.decoder(ast) == decodeDecl)
     }
   }
 }

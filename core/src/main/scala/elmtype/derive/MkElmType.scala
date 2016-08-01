@@ -76,7 +76,7 @@ object HListProductElmType {
   implicit def hcons[P, K <: Symbol, H, T <: HList]
    (implicit
      key: Witness.Aux[K],
-     headDecode: Strict[ElmType[H]],
+     headDecode: Strict[ValidSubType[H]],
      tailDecode: HListProductElmType[T]
    ): HListProductElmType[FieldType[K, H] :: T] =
     instance { (productCodec) =>
@@ -108,7 +108,7 @@ object CoproductSumElmType {
   implicit def ccons[K <: Symbol, H, T <: Coproduct]
    (implicit
      key: Witness.Aux[K],
-     headDecode: Lazy[ElmType[H]],
+     headDecode: Lazy[ValidSubType[H]],
      tailDecode: CoproductSumElmType[T]
    ): CoproductSumElmType[FieldType[K, H] :+: T] =
     instance { sumCodec =>
