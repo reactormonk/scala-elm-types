@@ -1,6 +1,7 @@
 package elmtype
 
 import shapeless._
+import java.time.Instant
 
 case class UnnamedSumType[T](types: List[ElmField[_]], typefield: Option[String]) {
   def map[S](ev: T => S) = UnnamedSumType[S](types, typefield)
@@ -30,6 +31,7 @@ object ElmType {
   implicit val elmfloat = RawType[Float]("Float", "float", "float")
   implicit val elmlong = RawType[Long]("String", "string", "string")
   implicit val elmbool = RawType[Boolean]("Bool", "bool", "bool")
+  implicit val elminstant = RawType[Instant]("Date", "toUtcIsoString", "date")
   implicit def elmlist[T](innerType: ValidSubType[T]): DirectType[List[ElmType[T]]] = HigherType("List", "list", "list", innerType)
   implicit def elmoption[T](innerType: ValidSubType[T]): DirectType[Option[ElmType[T]]] = HigherType("Maybe", "maybe", "maybe", innerType)
 }

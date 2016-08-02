@@ -22,11 +22,21 @@ object BasicTest extends TestSuite {
         case _ => throw new Exception("Wrong elm type.")
       }
       val ast = AST.typeAST(elmtype)
-      assert(AST.render(ast) == "type alias Basic = { a : Int, b : String }")
+      assert(AST.render(ast) == """import Date
+type alias Basic = { a : Int, b : String }""")
       assert(AST.decoder(ast) ==
-        """decodeBasic : Decoder Basic
+        """import Json.Decode.Extra
+import Json.Decode exposing (..)
+decodeBasic : Decoder Basic
 decodeBasic =
   succeed Basic |: ("a" := int) |: ("b" := string)""")
+      assert(AST.encoder(ast) == """import Json.Encode exposing (..)
+import Date.Extra exposing (toUtcIsoString)
+encodeBasic : Basic -> Value
+encodeBasic = object
+  [ ("a", int obj.a)
+  , ("b", string obj.b)
+  ]""")
     }
 
     'sum - {
@@ -38,12 +48,15 @@ decodeBasic =
       }
 
       val typeDecl =
-        """type Sealed = SealedI I | SealedS S
+        """import Date
+type Sealed = SealedI I | SealedS S
 type alias I = { i : Int }
 type alias S = { s : String }"""
 
       val decodeDecl =
-        """decodeSealed : Decoder Sealed
+        """import Json.Decode.Extra
+import Json.Decode exposing (..)
+decodeSealed : Decoder Sealed
 decodeSealed = oneOf
   [ ("I" := decodeI)
   , ("S" := decodeS)
@@ -55,9 +68,31 @@ decodeS : Decoder S
 decodeS =
   succeed S |: ("s" := string)"""
 
+      val encodeDecl =
+        """import Json.Encode exposing (..)
+import Date.Extra exposing (toUtcIsoString)
+
+encodeSealed: Sealed -> Value
+encodeSealed obj =
+  let
+    (typefield, inner) = case obj of
+      I obj2 -> ("I", encode{name} obj2)
+      S obj2 -> ("S", encode{name} obj2)
+    in
+      object [(typefield, (object inner))]
+encodeI : I -> Value
+encodeI = object
+  [ ("i", int obj.i)
+  ]
+encodeS : S -> Value
+encodeS = object
+  [ ("s", string obj.s)
+  ]"""
+
       val ast = AST.typeAST(elmtype)
       assert(AST.render(ast) == typeDecl)
       assert(AST.decoder(ast) == decodeDecl)
+      assert(AST.encoder(ast) == encodeDecl)
     }
   }
 }
