@@ -1,22 +1,12 @@
 package elmtype
+import java.time.Instant
 
-// These case classes / ADTs were originally the same as in scalacheck-shapeless
+case class Basic(a: Int, b: String)
 
-/*
- * We should have codecs for these
- */
-case object Empty
-case class EmptyCC()
-case class Simple(i: Int, s: String, blah: Boolean)
-case class Composed(foo: Simple, other: String)
-case class TwiceComposed(foo: Simple, bar: Composed, v: Int)
-case class ComposedOptList(fooOpt: Option[Simple], other: String, l: List[TwiceComposed])
+sealed trait Sealed
+case class S(s: String) extends Sealed
+case class I(i: Int) extends Sealed
 
-case class OI(oi: Option[Int])
+case class Listy(a: List[Int], b: Option[String])
 
-case class NowThree(s: String, i: Int, n: Double)
-
-sealed trait Base
-case class BaseIS(i: Int, s: String) extends Base
-case class BaseDB(d: Double, b: Boolean) extends Base
-case class BaseLast(c: Simple) extends Base
+case class Datey(a: Instant)
