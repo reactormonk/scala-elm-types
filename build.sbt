@@ -13,8 +13,8 @@ lazy val test = project
   .settings(noPublishSettings)
   .settings(
     libraryDependencies ++= Seq(
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.13" % "1.1.0-RC3" % "test",
-      "com.lihaoyi" %% "utest" % "0.3.0" % "test"
+      "com.lihaoyi" %% "utest" % "0.3.0" % "test",
+      "com.github.alexarchambault" %% "argonaut-shapeless_6.1" % "1.1.1"
     ),
     testFrameworks += new TestFramework("utest.runner.Framework")
   )
