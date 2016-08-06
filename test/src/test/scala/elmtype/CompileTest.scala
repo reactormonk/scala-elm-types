@@ -137,9 +137,9 @@ process.stdout.on('error', function(err) {
       assert(compiledI(0) == i)
     }
     'listy - {
-      // implicitly[ValidSubType[List[Int]]]
-      // implicitly[ValidSubType[Option[String]]]
-      // compileExternal(MkElmType[Listy].elm, Listy(List(23, 42), Some("bar")))
+      val l = Listy(List(23, 42), Some("bar"))
+      val compiled = compileExternal(MkElmType[Listy].elm, l)
+      assert(compiled(0) == l)
     }
     'datey - {
       val d = Datey(Instant.parse("2007-12-03T10:15:30.00Z"))
