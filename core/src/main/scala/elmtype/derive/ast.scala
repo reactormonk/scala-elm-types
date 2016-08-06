@@ -109,7 +109,7 @@ object AST {
   }
   def typeAST[T[_]](h: HigherType[T, _]): RawAST = {
     val inner = typeAST(h.innerType)
-    RawAST(s"${h.name} ${inner.name}", inner.dependent, s"${h.decoder} ${inner.decoderName}", s"${h.encoder} ${inner.encoderName}}")
+    RawAST(s"${h.name} ${inner.name}", inner.dependent, s"${h.decoder} ${inner.decoderName}", s"${h.encoder} ${inner.encoderName}")
   }
 
   def typeAST(h: ValidSubType[_]): ElmStandaloneType = {
