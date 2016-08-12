@@ -1,7 +1,7 @@
 package elmtype
 import java.time.Instant
 
-case class Basic(a: Int, b: String)
+case class Basic(a: Int, where: String)
 
 sealed trait Sealed
 case class S(s: String) extends Sealed

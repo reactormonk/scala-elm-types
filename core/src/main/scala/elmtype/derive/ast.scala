@@ -13,7 +13,6 @@ sealed trait ElmStandaloneType extends ElmTypeAST {
 }
 sealed trait ElmNamedType extends ElmStandaloneType {
   def typeDecl: String
-  // def encoder: String
   def decoder: String
   def decoderName = s"decode${name}"
   def encoder: String
@@ -22,7 +21,7 @@ sealed trait ElmNamedType extends ElmStandaloneType {
 
 case class ASTAlias(name: String, fields: List[ASTField], innerDependent: List[ElmNamedType]) extends ElmNamedType {
   val dependent = this :: innerDependent
-  val renderedFields = fields.map({ f => s"${f.name} : ${f.typeDecl}"})
+  val renderedFields = fields.map({ f => s"${f.mangledName} : ${f.typeDecl}"})
   val typeDecl = s"type alias $name = { ${renderedFields.mkString(", ")} }"
   def decoder = {
     val types = fields.map({ f => s"""("${f.name}" := ${f.inner.decoderName})"""})
@@ -31,7 +30,7 @@ decode${name} =
   Decode.succeed ${name} |: ${types.mkString(" |: ")}"""
   }
   def encoder = {
-    val types = fields.map({ f => s"""("${f.name}", ${f.inner.encoderName} obj.${f.name})"""})
+    val types = fields.map({ f => s"""("${f.name}", ${f.inner.encoderName} obj.${f.mangledName})"""})
     s"""encode${name} : ${name} -> Encode.Value
 encode${name} obj = Encode.object
   [ ${types.mkString("\n  , ")}
@@ -80,6 +79,7 @@ encode${name} obj =
 }
 case class ASTField(name: String, inner: ElmStandaloneType) extends ElmTypeAST {
   val typeDecl = inner.name
+  val mangledName = AST.mangledVariableName(name)
   val dependent = inner.dependent
 }
 case class RawAST(name: String, dependent: List[ElmNamedType], decoderName: String, encoderName: String) extends ElmStandaloneType
@@ -163,5 +163,14 @@ object AST {
   def mangleTypeName(name: String): String = {
     val mangled = name.replace("[", "_").replace("]", "_").replace(",", "_")
     if (mangled.last == '_') { mangled.init } else { mangled }
+  }
+
+  val reserved = Set("where")
+  def mangledVariableName(name: String): String = {
+    if(reserved.contains(name)) {
+      name + "_escaped"
+    } else {
+      name
+    }
   }
 }
