@@ -68,6 +68,7 @@ lazy val commonSettings = Seq(
     "scm:git:github.com/reactormonk/scala-elm-types.git",
     Some("scm:git:git@github.com:reactormonk/scala-elm-types.git")
   )),
+  homepage := Some(url("https://github.com/reactormonk/scala-elm-types")),
   developers := List(Developer(
     "reactormonk",
     "Simon Hafner",
