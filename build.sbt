@@ -64,9 +64,9 @@ lazy val commonSettings = Seq(
     "BSD-3-Clause" -> url("http://www.opensource.org/licenses/BSD-3-Clause")
   ),
   scmInfo := Some(ScmInfo(
-    url("https://github.com/reactormonk/argonaut-shapeless.git"),
-    "scm:git:github.com/reactormonk/argonaut-shapeless.git",
-    Some("scm:git:git@github.com:reactormonk/argonaut-shapeless.git")
+    url("https://github.com/reactormonk/scala-elm-types.git"),
+    "scm:git:github.com/reactormonk/scala-elm-types.git",
+    Some("scm:git:git@github.com:reactormonk/scala-elm-types.git")
   )),
   developers := List(Developer(
     "reactormonk",
