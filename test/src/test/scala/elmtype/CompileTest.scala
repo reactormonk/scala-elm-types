@@ -3,6 +3,7 @@ package elmtype
 import java.nio.charset.StandardCharsets
 import java.nio.file.{ Files, Path }
 import java.time.format.DateTimeParseException
+import java.lang.NumberFormatException
 import java.io.ByteArrayInputStream
 import utest._
 import elmtype._
@@ -29,6 +30,21 @@ object CompileTest extends TestSuite {
       )
     )
   )
+
+  implicit val elmlong = RawType[Long]("String", "Encode.string", "Decode.string")
+  implicit val longcodec = CodecJson[Long](
+    long => Json.jString(long.toString),
+    c => c.as[String].flatMap(str =>
+      \/.fromTryCatchNonFatal(str.toLong).fold(err => err match {
+        case e: NumberFormatException => DecodeResult.fail(e.toString, c.history)
+        case e => throw e
+      },
+        DecodeResult.ok
+      )
+    )
+  )
+  implicit val encodeLong = longcodec.Encoder
+  implicit val decodeLong = longcodec.Decoder
 
   val packages = """
 {
@@ -145,6 +161,11 @@ process.stdout.on('error', function(err) {
       val d = Datey(Instant.parse("2007-12-03T10:15:30.00Z"))
       val compiled = compileExternal(MkElmType[Datey].elm, d)
       assert(compiled(0) == d)
+    }
+    'longy - {
+      val l = Longy(2893819230231232123L)
+      val compiled = compileExternal(MkElmType[Longy].elm, l)
+      assert(compiled(0) == l)
     }
   }
 }

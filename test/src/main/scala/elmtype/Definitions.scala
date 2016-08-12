@@ -10,3 +10,5 @@ case class I(i: Int) extends Sealed
 case class Listy(a: List[Int], b: Option[String])
 
 case class Datey(a: Instant)
+
+case class Longy(l: Long)

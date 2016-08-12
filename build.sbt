@@ -28,6 +28,8 @@ lazy val doc = project
   .settings(
     tutSourceDirectory := baseDirectory.value,
     tutTargetDirectory := baseDirectory.value / ".."
+  ).settings(
+    libraryDependencies += "com.github.alexarchambault" %% "argonaut-shapeless_6.1" % "1.1.1"
   )
 
 val shapelessVersion = "2.3.1"
@@ -50,7 +52,6 @@ lazy val projectSettings =
 
 lazy val compileSettings = Seq(
   scalaVersion := "2.11.8",
-  scalacOptions += "-target:jvm-1.7",
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases")
   ),
