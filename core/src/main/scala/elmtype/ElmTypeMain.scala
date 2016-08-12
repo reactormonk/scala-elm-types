@@ -12,7 +12,7 @@ case class ElmTypeMain(list: List[CombinedType[_]]) {
       case "-" => System.out
       case x => new FileOutputStream(x)
     }
-    val data = list.map(AST.typeAST).map(AST.code).reduce(_ ++ _)
+    val data = list.map(AST.typeAST).map(AST.code).reduce(_ ++ _).render
     target.write(io.Codec.toUTF8(data))
     target.close
   }

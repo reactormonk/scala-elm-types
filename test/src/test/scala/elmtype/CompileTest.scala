@@ -126,7 +126,7 @@ process.stdout.on('error', function(err) {
 
   def compileExternal[T: EncodeJson: DecodeJson](elmType: CombinedType[T], obj: T): List[T] = {
     val ast = AST.typeAST(elmType)
-    val code = AST.code(ast)
+    val code = AST.code(ast).render
     val path = Files.createTempDirectory("elmtypes")
     println(s"Writing $obj in $path")
     Files.write(path.resolve("Codec.elm"), List(code).asJava, StandardCharsets.UTF_8)

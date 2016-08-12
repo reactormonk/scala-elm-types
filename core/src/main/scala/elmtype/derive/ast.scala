@@ -156,8 +156,8 @@ object AST {
       t.dependent.distinct.map(_.encoder))
   }
 
-  def code(t: ElmNamedType): String = {
-    (Code(List("module Codec exposing (..)"), List()) ++ typeDecl(t) ++ decoder(t) ++ encoder(t)).render
+  def code(t: ElmNamedType): Code = {
+    Code(List("module Codec exposing (..)"), List()) ++ typeDecl(t) ++ decoder(t) ++ encoder(t)
   }
 
   def mangleTypeName(name: String): String = {
