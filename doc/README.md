@@ -42,6 +42,13 @@ val compileElm = taskKey[File]("Compile the elm into an index.html")
 
 Then add the result of `(compileElm in client)` to your assets.
 
+Dependencies to add:
+
+```
+"elm-community/json-extra": "1.0.0 <= v < 2.0.0",
+"justinmimbs/elm-date-extra": "2.0.0 <= v < 3.0.0"
+```
+
 # Longs
 
 because JS only supports 53 bits of precision in a general JSON parser, use this:
