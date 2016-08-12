@@ -29,6 +29,7 @@ case class HigherType[T[_], I](name: String, encoder: String, decoder: String, i
 trait ElmTypes {
   implicit val elmstring = RawType[String]("String", "Encode.string", "Decode.string")
   implicit val elmint = RawType[Int]("Int", "Encode.int", "Decode.int")
+  implicit val elmshort = RawType[Short]("Int", "Encode.int", "Decode.int")
   implicit val elmfloat = RawType[Float]("Float", "Encode.float", "Decode.float")
   implicit val elmbool = RawType[Boolean]("Bool", "Encode.bool", "Decode.bool")
   implicit val elminstant = RawType[Instant]("Date", "Encode.string <| toUtcIsoString", "date")
