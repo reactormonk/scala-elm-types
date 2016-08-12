@@ -128,6 +128,7 @@ process.stdout.on('error', function(err) {
     val ast = AST.typeAST(elmType)
     val code = AST.code(ast)
     val path = Files.createTempDirectory("elmtypes")
+    println(s"Writing $obj in $path")
     Files.write(path.resolve("Codec.elm"), List(code).asJava, StandardCharsets.UTF_8)
     Files.write(path.resolve("elm-package.json"), List(packages).asJava, StandardCharsets.UTF_8)
     Files.write(path.resolve("Main.elm"), List(elmTestRunner(ast.encoderName, ast.decoderName)).asJava, StandardCharsets.UTF_8)
@@ -166,6 +167,11 @@ process.stdout.on('error', function(err) {
       val l = Longy(2893819230231232123L)
       val compiled = compileExternal(MkElmType[Longy].elm, l)
       assert(compiled(0) == l)
+    }
+    'nested - {
+      val n = Nested(2, Basic(23, "foo"))
+      val compiled = compileExternal(MkElmType[Nested].elm, n)
+      assert(compiled(0) == n)
     }
   }
 }

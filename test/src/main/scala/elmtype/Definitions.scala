@@ -12,3 +12,9 @@ case class Listy(a: List[Int], b: Option[String])
 case class Datey(a: Instant)
 
 case class Longy(l: Long)
+
+case class Nested(a: Int, b: Basic)
+
+case class Identifier[T[_]](id: Long, name: String)
+
+case class Character[T](t: T)

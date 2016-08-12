@@ -86,7 +86,7 @@ case class RawAST(name: String, dependent: List[ElmNamedType], decoderName: Stri
 
 case class Code(imports: List[String], code: List[String]) {
   def render: String = (imports ++ code).mkString("\n")
-  def ++(other: Code) = Code(imports ++ other.imports, code ++ other.code)
+  def ++(other: Code) = Code((imports ++ other.imports).distinct, code ++ other.code)
 }
 
 object AST {
