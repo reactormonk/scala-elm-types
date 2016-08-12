@@ -173,5 +173,10 @@ process.stdout.on('error', function(err) {
       val compiled = compileExternal(MkElmType[Nested].elm, n)
       assert(compiled(0) == n)
     }
+    'alias - {
+      val a = Alias(Identifier[Character](23, "foo"))
+      val compiled = compileExternal(implicitly[CombinedType[Alias]], a)
+      assert(compiled(0) == a)
+    }
   }
 }

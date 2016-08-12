@@ -15,6 +15,12 @@ case class Longy(l: Long)
 
 case class Nested(a: Int, b: Basic)
 
-case class Identifier[T[_]](id: Long, name: String)
+case class Identifier[T[_]](id: Int, name: String)
 
 case class Character[T](t: T)
+
+object Aliases {
+  type CompressedCharacter = Identifier[Character]
+}
+
+case class Alias(t: Aliases.CompressedCharacter)

@@ -90,15 +90,15 @@ case class Code(imports: List[String], code: List[String]) {
 }
 
 object AST {
-    def typeAST(s: SumType[_]): ASTSum = {
+  def typeAST(s: SumType[_]): ASTSum = {
     val inner = s.types.map(typeAST)
     val dependents = inner.flatMap(_.dependent)
-    ASTSum(s.typeable.describe, inner, dependents, s.typefield)
+    ASTSum(mangleTypeName(s.typeable.describe), inner, dependents, s.typefield)
   }
   def typeAST(p: ProductType[_]): ASTAlias = {
     val inner = p.types.map(typeAST)
     val dependents = inner.flatMap(_.dependent)
-    ASTAlias(p.typeable.describe, inner, dependents)
+    ASTAlias(mangleTypeName(p.typeable.describe), inner, dependents)
   }
   def typeAST(e: ElmField[_]): ASTField = {
     val inner = typeAST(e.innerType)
@@ -158,5 +158,10 @@ object AST {
 
   def code(t: ElmNamedType): String = {
     (Code(List("module Codec exposing (..)"), List()) ++ typeDecl(t) ++ decoder(t) ++ encoder(t)).render
+  }
+
+  def mangleTypeName(name: String): String = {
+    val mangled = name.replace("[", "_").replace("]", "_").replace(",", "_")
+    if (mangled.last == '_') { mangled.init } else { mangled }
   }
 }
