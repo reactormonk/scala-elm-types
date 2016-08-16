@@ -24,3 +24,9 @@ object Aliases {
 }
 
 case class Alias(t: Aliases.CompressedCharacter)
+
+sealed trait NestedAST
+case class NestedI(i: Int) extends NestedAST
+sealed trait Nested2 extends NestedAST
+case class NestedS(s: String) extends Nested2
+case class NestedF(f: Float) extends Nested2
