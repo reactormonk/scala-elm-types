@@ -8,7 +8,6 @@ NOT support default values correctly.
 To specify which codecs to use:
 
 ```scala
-import java.time._
 import elmtype._
 import elmtype.derive._
 import ElmTypeShapeless._
