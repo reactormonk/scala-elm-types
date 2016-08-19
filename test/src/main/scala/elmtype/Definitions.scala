@@ -30,3 +30,7 @@ case class NestedI(i: Int) extends NestedAST
 sealed trait Nested2 extends NestedAST
 case class NestedS(s: String) extends Nested2
 case class NestedF(f: Float) extends Nested2
+
+sealed trait CaseObjectAST
+case class CaseClass(i: Int) extends CaseObjectAST
+case object CaseObject extends CaseObjectAST

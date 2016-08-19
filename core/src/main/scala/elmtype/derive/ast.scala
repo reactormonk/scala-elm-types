@@ -24,10 +24,10 @@ case class ASTAlias(name: String, fields: List[ASTField], innerDependent: List[E
   val renderedFields = fields.map({ f => s"${f.mangledName} : ${f.typeDecl}"})
   val typeDecl = s"type alias $name = { ${renderedFields.mkString(", ")} }"
   def decoder = {
-    val types = fields.map({ f => s"""("${f.name}" := ${f.inner.decoderName})"""})
+    val types = "" :: fields.map({ f => s"""("${f.name}" := ${f.inner.decoderName})"""})
     s"""decode${name} : Decode.Decoder ${name}
 decode${name} =
-  Decode.succeed ${name} |: ${types.mkString(" |: ")}"""
+  Decode.succeed ${name}${types.mkString(" |: ")}"""
   }
   def encoder = {
     val types = fields.map({ f => s"""("${f.name}", ${f.inner.encoderName} obj.${f.mangledName})"""})
@@ -161,7 +161,7 @@ object AST {
   }
 
   def mangleTypeName(name: String): String = {
-    val mangled = name.replace("[", "_").replace("]", "_").replace(",", "_")
+    val mangled = name.replace("[", "_").replace("]", "_").replace(",", "_").replace(".type", "")
     if (mangled.last == '_') { mangled.init } else { mangled }
   }
 
