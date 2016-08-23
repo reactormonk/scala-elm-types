@@ -34,7 +34,7 @@ val compileElm = taskKey[File]("Compile the elm into an index.html")
 (compileElm in client) := {
   val codec = (baseDirectory in client).value / "Codec.elm"
   (runner in (shared, run)).value.run("ElmTypes", Attributed.data((fullClasspath in shared in Compile).value), Seq(codec.toString), streams.value.log)
-  if (Process("elm-make Main.elm", file("client")).! != 0) {throw new Exception("elm build failed!")}
+  if (Process("elm-make --yes Main.elm", file("client")).! != 0) {throw new Exception("elm build failed!")}
   (baseDirectory in client).value / "index.html"
 }
 ```
