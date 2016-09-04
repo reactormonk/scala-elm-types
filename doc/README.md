@@ -3,6 +3,23 @@
 Automatic codec generation for elm based on scala case classes. Does currently
 NOT support default values correctly.
 
+# Sample Code
+
+```tut
+import elmtype._
+import elmtype.derive._
+import ElmTypeShapeless._
+
+case class User(id: Int, name: String)
+
+sealed trait Protocol
+case class Hello(user: User) extends Protocol
+case class Login(user: Option[User]) extends Protocol
+case object Boom extends Protocol
+
+println(AST.code(AST.typeAST(MkElmType[Protocol].elm)).render)
+```
+
 # Usage
 
 To specify which codecs to use:

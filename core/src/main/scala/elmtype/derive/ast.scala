@@ -160,8 +160,9 @@ object AST {
     Code(List("module Codec exposing (..)"), List()) ++ typeDecl(t) ++ decoder(t) ++ encoder(t)
   }
 
+  val sbtRegex = """\$line\d+\.\$read[$iw]+""".r
   def mangleTypeName(name: String): String = {
-    val mangled = name.replace("[", "_").replace("]", "_").replace(",", "_").replace(".type", "")
+    val mangled = sbtRegex.replaceAllIn(name, "").replace("[", "_").replace("]", "_").replace(",", "_").replace(".type", "")
     if (mangled.last == '_') { mangled.init } else { mangled }
   }
 

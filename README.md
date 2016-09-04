@@ -3,6 +3,92 @@
 Automatic codec generation for elm based on scala case classes. Does currently
 NOT support default values correctly.
 
+# Sample Code
+
+```scala
+scala> import elmtype._
+import elmtype._
+
+scala> import elmtype.derive._
+import elmtype.derive._
+
+scala> import ElmTypeShapeless._
+import ElmTypeShapeless._
+
+scala> case class User(id: Int, name: String)
+defined class User
+
+scala> sealed trait Protocol
+defined trait Protocol
+
+scala> case class Hello(user: User) extends Protocol
+defined class Hello
+
+scala> case class Login(user: Option[User]) extends Protocol
+defined class Login
+
+scala> case object Boom extends Protocol
+defined object Boom
+
+scala> println(AST.code(AST.typeAST(MkElmType[Protocol].elm)).render)
+module Codec exposing (..)
+import Date exposing (Date)
+import Json.Decode.Extra exposing(..)
+import Json.Decode as Decode exposing ( (:=) )
+import Json.Encode as Encode
+import Date.Extra exposing (toUtcIsoString)
+type Protocol = ProtocolLogin Login | ProtocolBoom Boom | ProtocolHello Hello
+type alias Login = { user : Maybe User }
+type alias User = { id : Int, name : String }
+type alias Boom = {  }
+type alias Hello = { user : User }
+decodeProtocol : Decode.Decoder Protocol
+decodeProtocol = Decode.oneOf
+  [ ("Login" := Decode.map ProtocolLogin decodeLogin)
+  , ("Boom" := Decode.map ProtocolBoom decodeBoom)
+  , ("Hello" := Decode.map ProtocolHello decodeHello)
+  ]
+decodeLogin : Decode.Decoder Login
+decodeLogin =
+  Decode.succeed Login |: ("user" := Decode.maybe decodeUser)
+decodeUser : Decode.Decoder User
+decodeUser =
+  Decode.succeed User |: ("id" := Decode.int) |: ("name" := Decode.string)
+decodeBoom : Decode.Decoder Boom
+decodeBoom =
+  Decode.succeed Boom
+decodeHello : Decode.Decoder Hello
+decodeHello =
+  Decode.succeed Hello |: ("user" := decodeUser)
+
+encodeProtocol: Protocol -> Encode.Value
+encodeProtocol obj =
+  let
+    (typefield, inner) = case obj of
+      ProtocolLogin obj2 -> ("Login", encodeLogin obj2)
+      ProtocolBoom obj2 -> ("Boom", encodeBoom obj2)
+      ProtocolHello obj2 -> ("Hello", encodeHello obj2)
+    in
+      Encode.object [(typefield, inner)]
+encodeLogin : Login -> Encode.Value
+encodeLogin obj = Encode.object
+  [ ("user", Maybe.withDefault Encode.null <| Maybe.map encodeUser obj.user)
+  ]
+encodeUser : User -> Encode.Value
+encodeUser obj = Encode.object
+  [ ("id", Encode.int obj.id)
+  , ("name", Encode.string obj.name)
+  ]
+encodeBoom : Boom -> Encode.Value
+encodeBoom obj = Encode.object
+  [ 
+  ]
+encodeHello : Hello -> Encode.Value
+encodeHello obj = Encode.object
+  [ ("user", encodeUser obj.user)
+  ]
+```
+
 # Usage
 
 To specify which codecs to use:
