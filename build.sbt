@@ -3,13 +3,13 @@ import com.typesafe.sbt.pgp.PgpKeys
 lazy val core = project
   .settings(commonSettings)
   .settings(coreSettings)
-  .settings(projectSettings)
+  .settings(compileSettings)
 
 lazy val test = project
   .dependsOn(core)
   .settings(commonSettings)
   .settings(coreSettings)
-  .settings(projectSettings)
+  .settings(compileSettings)
   .settings(noPublishSettings)
   .settings(
     libraryDependencies ++= Seq(
@@ -44,11 +44,6 @@ lazy val coreSettings = Seq(
     "com.chuusai" %% "shapeless" % shapelessVersion
   )
 )
-
-lazy val projectSettings =
-  compileSettings ++
-  releaseSettings ++
-  extraReleaseSettings
 
 lazy val compileSettings = Seq(
   scalaVersion := "2.11.8",
@@ -98,11 +93,6 @@ lazy val noPublishSettings = Seq(
   publish := (),
   publishLocal := (),
   publishArtifact := false
-)
-
-lazy val extraReleaseSettings = Seq(
-  ReleaseKeys.versionBump := sbtrelease.Version.Bump.Bugfix,
-  sbtrelease.ReleasePlugin.ReleaseKeys.publishArtifactsAction := PgpKeys.publishSigned.value
 )
 
 // build.sbt shamelessly inspired by https://github.com/fthomas/refined/blob/master/build.sbt

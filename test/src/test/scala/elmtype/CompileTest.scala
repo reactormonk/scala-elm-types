@@ -57,12 +57,11 @@ object CompileTest extends TestSuite {
   ],
   "exposed-modules": [],
   "dependencies": {
-    "elm-lang/core": "4.0.3 <= v < 5.0.0",
-    "elm-lang/html": "1.1.0 <= v < 2.0.0",
-    "elm-community/json-extra": "1.0.0 <= v < 2.0.0",
+    "elm-lang/core": "5.0.0 <= v < 6.0.0",
+    "elm-community/json-extra": "2.0.0 <= v < 3.0.0",
     "justinmimbs/elm-date-extra": "2.0.0 <= v < 3.0.0"
   },
-  "elm-version": "0.17.1 <= v < 0.18.0"
+  "elm-version": "0.18.0 <= v < 0.19.0"
 }
 """
 
@@ -70,8 +69,6 @@ object CompileTest extends TestSuite {
   def elmTestRunner(encoderName: String, decoderName: String) = s"""
 port module Main exposing (..)
 
-import Html exposing (..)
-import Html.App as App
 import Codec exposing (..)
 import Json.Encode exposing (..)
 import Json.Decode exposing (decodeString)
@@ -81,12 +78,11 @@ type Msg = Json String
 
 port jsons: (String -> msg) -> Sub msg
 
-main : Program Never
+main : Program Never () Msg
 main =
-    App.programWithFlags
-        { init = ${backslash}_ -> ((), Cmd.none)
+    Platform.program
+        { init = ((), Cmd.none)
         , update = ${backslash}(Json msg) _ -> (Debug.log (testJson msg) <| (), Cmd.none)
-        , view = ${backslash}() -> Html.text "Check the console for useful output!"
         , subscriptions = subscriptions
         }
 

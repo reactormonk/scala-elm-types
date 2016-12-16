@@ -24,7 +24,7 @@ case class ASTAlias(name: String, fields: List[ASTField], innerDependent: List[E
   val renderedFields = fields.map({ f => s"${f.mangledName} : ${f.typeDecl}"})
   val typeDecl = s"type alias $name = { ${renderedFields.mkString(", ")} }"
   def decoder = {
-    val types = "" :: fields.map({ f => s"""("${f.name}" := ${f.inner.decoderName})"""})
+    val types = "" :: fields.map({ f => s"""(field "${f.name}" <| ${f.inner.decoderName})"""})
     s"""decode${name} : Decode.Decoder ${name}
 decode${name} =
   Decode.succeed ${name}${types.mkString(" |: ")}"""
@@ -48,13 +48,13 @@ case class ASTSum(name: String, fields: List[ASTField], innerDependent: List[Elm
     ${f.inner.decoderName}"""
       })
       s"""decode${name} : Decoder $name
-decode${name} = ("${field}" := string) `andThen` (\typefield ->
+decode${name} = (field "${field}" <| string) `andThen` (\typefield ->
 ${types.mkString("\n")}
   _ -> fail (typefield ++ " is not recognized among ${fields.map(_.name).mkString(" ")}")
   )"""
     }
     case None => {
-      val types = fields.map({ f => s"""("${f.name}" := Decode.map ${name}${f.name} decode${f.name})"""})
+      val types = fields.map({ f => s"""(field "${f.name}" <| Decode.map ${name}${f.name} decode${f.name})"""})
       s"""decode${name} : Decode.Decoder $name
 decode${name} = Decode.oneOf
   [ ${types.mkString("\n  , ")}
@@ -73,8 +73,8 @@ encode${name} obj =
   let
     (typefield, inner) = case obj of
       ${types.mkString("\n      ")}
-    in
-      ${outer}"""
+  in
+    ${outer}"""
   }
 }
 case class ASTField(name: String, inner: ElmStandaloneType) extends ElmTypeAST {
@@ -145,7 +145,7 @@ object AST {
   // http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra
   def decoder(t: ElmNamedType): Code = {
     Code(List("import Json.Decode.Extra exposing(..)",
-      "import Json.Decode as Decode exposing ( (:=) )"),
+      "import Json.Decode as Decode exposing ( field )"),
       t.dependent.distinct.map(_.decoder))
   }
 
