@@ -14,20 +14,20 @@ import sys.process._
 import language.implicitConversions
 import shapeless._
 import argonaut._, Argonaut._, ArgonautShapeless._
-import scalaz._
 import java.time.Instant
+import util._
 
 object CompileTest extends TestSuite {
 
   implicit val instantCodec: CodecJson[Instant] = CodecJson(
     (instant: Instant) => Json.jString(instant.toString),
     c => c.as[String].flatMap(str =>
-      \/.fromTryCatchNonFatal(Instant.parse(str)).fold(err => err match {
-        case e: DateTimeParseException => DecodeResult.fail(e.toString, c.history)
-        case e => throw e
-      },
-        DecodeResult.ok
-      )
+      Try(Instant.parse(str)) match {
+        case Failure(e : DateTimeParseException) =>
+          DecodeResult.fail(e.toString, c.history)
+        case Failure(e) => throw e
+        case Success(obj) => DecodeResult.ok(obj)
+      }
     )
   )
 
@@ -35,12 +35,11 @@ object CompileTest extends TestSuite {
   implicit val longcodec = CodecJson[Long](
     long => Json.jString(long.toString),
     c => c.as[String].flatMap(str =>
-      \/.fromTryCatchNonFatal(str.toLong).fold(err => err match {
-        case e: NumberFormatException => DecodeResult.fail(e.toString, c.history)
-        case e => throw e
-      },
-        DecodeResult.ok
-      )
+      Try(str.toLong) match {
+        case Failure(e: NumberFormatException) => DecodeResult.fail(e.toString, c.history)
+        case Failure(e) => throw e
+        case Success(obj) => DecodeResult.ok(obj)
+      }
     )
   )
   implicit val encodeLong = longcodec.Encoder
@@ -132,7 +131,7 @@ process.stdout.on('error', function(err) {
     assert(exit == 0)
     Files.write(path.resolve("test.js"), List(nodeRunner).asJava, StandardCharsets.UTF_8)
     val json = (Process("node test.js", path.toFile) #< new ByteArrayInputStream(obj.asJson.nospaces.getBytes(StandardCharsets.UTF_8))).lineStream.map(_.dropRight(4))
-    json.toList.map(j => Parse.decodeEither[T](j).leftMap[Nothing](err => throw new Exception(err)).merge)
+    json.toList.map(j => Parse.decodeEither[T](j).left.map[Nothing](err => throw new Exception(err)).merge)
   }
 
   val tests = TestSuite {

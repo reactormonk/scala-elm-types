@@ -73,21 +73,20 @@ because JS only supports 53 bits of precision in a general JSON parser, use this
 import elmtype._
 import elmtype.derive._
 import ElmTypeShapeless._
-import scalaz._
 import argonaut._
 import java.lang.NumberFormatException
+import util._
 
 object Test {
   implicit val elmlong = RawType[Long]("String", "Encode.string", "Decode.string")
   implicit val longcodec = CodecJson[Long](
     long => Json.jString(long.toString),
     c => c.as[String].flatMap(str =>
-      \/.fromTryCatchNonFatal(str.toLong).fold(err => err match {
-        case e: NumberFormatException => DecodeResult.fail(e.toString, c.history)
-        case e => throw e
-      },
-        DecodeResult.ok
-      )
+      Try(str.toLong) match {
+        case Failure(e: NumberFormatException) => DecodeResult.fail(e.toString, c.history)
+        case Failure(e) => throw e
+        case Success(obj) => DecodeResult.ok(obj)
+      }
     )
   )
 

@@ -1,27 +1,27 @@
 import com.typesafe.sbt.pgp.PgpKeys
 
+crossScalaVersions in ThisBuild := Seq("2.12.1", "2.11.8")
+
 lazy val core = project
-  .settings(commonSettings)
+  .settings(publishSettings)
   .settings(coreSettings)
   .settings(compileSettings)
 
 lazy val test = project
   .dependsOn(core)
-  .settings(commonSettings)
   .settings(coreSettings)
   .settings(compileSettings)
   .settings(noPublishSettings)
   .settings(
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %% "utest" % "0.3.0" % "test",
-      "com.github.alexarchambault" %% "argonaut-shapeless_6.1" % "1.1.1"
+      "com.lihaoyi" %% "utest" % "0.4.4" % "test",
+      "com.github.alexarchambault" %% "argonaut-shapeless_6.2" % "1.2.0-M4"
     ),
     testFrameworks += new TestFramework("utest.runner.Framework")
   )
 
 lazy val doc = project
   .dependsOn(core)
-  .settings(commonSettings)
   .settings(compileSettings)
   .settings(noPublishSettings)
   .settings(tutSettings)
@@ -29,24 +29,23 @@ lazy val doc = project
     tutSourceDirectory := baseDirectory.value,
     tutTargetDirectory := baseDirectory.value / ".."
   ).settings(
-    libraryDependencies += "com.github.alexarchambault" %% "argonaut-shapeless_6.1" % "1.1.1"
+    libraryDependencies += "com.github.alexarchambault" %% "argonaut-shapeless_6.2" % "1.2.0-M4"
   )
 
-val shapelessVersion = "2.3.1"
+val shapelessVersion = "2.3.2"
 
 lazy val coreName = "elmtypes"
 
 lazy val coreSettings = Seq(
   organization := "org.reactormonk",
   name := coreName,
-  moduleName := coreName,
   libraryDependencies ++= Seq(
     "com.chuusai" %% "shapeless" % shapelessVersion
   )
 )
 
 lazy val compileSettings = Seq(
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.12.1",
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases")
   ),
@@ -54,7 +53,7 @@ lazy val compileSettings = Seq(
     compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 )
 
-lazy val commonSettings = Seq(
+lazy val publishSettings = Seq(
   licenses := Seq(
     "BSD-3-Clause" -> url("http://www.opensource.org/licenses/BSD-3-Clause")
   ),

@@ -34,7 +34,7 @@ scala> println(AST.code(AST.typeAST(MkElmType[Protocol].elm)).render)
 module Codec exposing (..)
 import Date exposing (Date)
 import Json.Decode.Extra exposing(..)
-import Json.Decode as Decode exposing ( (:=) )
+import Json.Decode as Decode exposing ( field )
 import Json.Encode as Encode
 import Date.Extra exposing (toUtcIsoString)
 type Protocol = ProtocolLogin Login | ProtocolBoom Boom | ProtocolHello Hello
@@ -44,22 +44,22 @@ type alias Boom = {  }
 type alias Hello = { user : User }
 decodeProtocol : Decode.Decoder Protocol
 decodeProtocol = Decode.oneOf
-  [ ("Login" := Decode.map ProtocolLogin decodeLogin)
-  , ("Boom" := Decode.map ProtocolBoom decodeBoom)
-  , ("Hello" := Decode.map ProtocolHello decodeHello)
+  [ (field "Login" <| Decode.map ProtocolLogin decodeLogin)
+  , (field "Boom" <| Decode.map ProtocolBoom decodeBoom)
+  , (field "Hello" <| Decode.map ProtocolHello decodeHello)
   ]
 decodeLogin : Decode.Decoder Login
 decodeLogin =
-  Decode.succeed Login |: ("user" := Decode.maybe decodeUser)
+  Decode.succeed Login |: (field "user" <| Decode.maybe decodeUser)
 decodeUser : Decode.Decoder User
 decodeUser =
-  Decode.succeed User |: ("id" := Decode.int) |: ("name" := Decode.string)
+  Decode.succeed User |: (field "id" <| Decode.int) |: (field "name" <| Decode.string)
 decodeBoom : Decode.Decoder Boom
 decodeBoom =
   Decode.succeed Boom
 decodeHello : Decode.Decoder Hello
 decodeHello =
-  Decode.succeed Hello |: ("user" := decodeUser)
+  Decode.succeed Hello |: (field "user" <| decodeUser)
 
 encodeProtocol: Protocol -> Encode.Value
 encodeProtocol obj =
@@ -68,8 +68,8 @@ encodeProtocol obj =
       ProtocolLogin obj2 -> ("Login", encodeLogin obj2)
       ProtocolBoom obj2 -> ("Boom", encodeBoom obj2)
       ProtocolHello obj2 -> ("Hello", encodeHello obj2)
-    in
-      Encode.object [(typefield, inner)]
+  in
+    Encode.object [(typefield, inner)]
 encodeLogin : Login -> Encode.Value
 encodeLogin obj = Encode.object
   [ ("user", Maybe.withDefault Encode.null <| Maybe.map encodeUser obj.user)
@@ -142,21 +142,20 @@ because JS only supports 53 bits of precision in a general JSON parser, use this
 import elmtype._
 import elmtype.derive._
 import ElmTypeShapeless._
-import scalaz._
 import argonaut._
 import java.lang.NumberFormatException
+import util._
 
 object Test {
   implicit val elmlong = RawType[Long]("String", "Encode.string", "Decode.string")
   implicit val longcodec = CodecJson[Long](
     long => Json.jString(long.toString),
     c => c.as[String].flatMap(str =>
-      \/.fromTryCatchNonFatal(str.toLong).fold(err => err match {
-        case e: NumberFormatException => DecodeResult.fail(e.toString, c.history)
-        case e => throw e
-      },
-        DecodeResult.ok
-      )
+      Try(str.toLong) match {
+        case Failure(e: NumberFormatException) => DecodeResult.fail(e.toString, c.history)
+        case Failure(e) => throw e
+        case Success(obj) => DecodeResult.ok(obj)
+      }
     )
   )
 
