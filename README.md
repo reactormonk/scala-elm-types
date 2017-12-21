@@ -3,6 +3,12 @@
 Automatic codec generation for elm based on scala case classes. Does currently
 NOT support default values correctly.
 
+# Add to SBT
+
+```sbt
+libraryDependencies += "org.reactormonk" %% "elmtypes" % "0.3"
+```
+
 # Sample Code
 
 ```scala
@@ -81,7 +87,7 @@ encodeUser obj = Encode.object
   ]
 encodeBoom : Boom -> Encode.Value
 encodeBoom obj = Encode.object
-  [ 
+  [
   ]
 encodeHello : Hello -> Encode.Value
 encodeHello obj = Encode.object
