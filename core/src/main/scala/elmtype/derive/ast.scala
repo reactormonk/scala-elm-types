@@ -145,14 +145,15 @@ object AST {
   // http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra
   def decoder(t: ElmNamedType): Code = {
     Code(List("import Json.Decode.Extra exposing(..)",
-      "import Json.Decode as Decode exposing ( field )"),
+              "import Json.Decode as Decode exposing ( field )",
+              "import Json.Encode.Extra as Encode"),
       t.dependent.distinct.map(_.decoder))
   }
 
   // http://package.elm-lang.org/packages/justinmimbs/elm-date-extra/2.0.0/
   def encoder(t: ElmNamedType): Code = {
     Code(List("import Json.Encode as Encode",
-      "import Date.Extra exposing (toUtcIsoString)"),
+              "import Date.Extra exposing (toUtcIsoString)"),
       t.dependent.distinct.map(_.encoder))
   }
 
