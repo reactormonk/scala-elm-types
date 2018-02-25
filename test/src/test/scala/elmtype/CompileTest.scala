@@ -183,5 +183,10 @@ process.stdout.on('error', function(err) {
       val compiled = compileExternal(MkElmType[CaseObjectAST].elm, o)
       assert(compiled(0) == o)
     }
+    'nestedTypes - {
+      val n = NestedTypes(Some(List("foo", "bar")))
+      val compiled = compileExternal(MkElmType[NestedTypes].elm, n)
+      assert(compiled(0) == n)
+    }
   }
 }

@@ -33,6 +33,6 @@ trait ElmTypes {
   implicit val elmfloat = RawType[Float]("Float", "Encode.float", "Decode.float")
   implicit val elmbool = RawType[Boolean]("Bool", "Encode.bool", "Decode.bool")
   implicit val elminstant = RawType[Instant]("Date", "Encode.string <| toUtcIsoString", "date")
-  implicit def elmlist[T](implicit innerType: ValidSubType[T]): ValidSubType[List[T]] = HigherType[List, T]("List", "Encode.list <| List.map", "Decode.list", innerType)
-  implicit def elmoption[T](implicit innerType: ValidSubType[T]): ValidSubType[Option[T]] = HigherType[Option, T]("Maybe", "Maybe.withDefault Encode.null <| Maybe.map", "Decode.maybe", innerType)
+  implicit def elmlist[T](implicit innerType: ValidSubType[T]): ValidSubType[List[T]] = HigherType[List, T]("List", "Encode.list << List.map", "Decode.list", innerType)
+  implicit def elmoption[T](implicit innerType: ValidSubType[T]): ValidSubType[Option[T]] = HigherType[Option, T]("Maybe", "Maybe.withDefault Encode.null << Maybe.map", "Decode.maybe", innerType)
 }

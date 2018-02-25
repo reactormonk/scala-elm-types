@@ -34,3 +34,5 @@ case class NestedF(f: Float) extends Nested2
 sealed trait CaseObjectAST
 case class CaseClass(i: Int) extends CaseObjectAST
 case object CaseObject extends CaseObjectAST
+
+case class NestedTypes(x: Option[List[String]])
